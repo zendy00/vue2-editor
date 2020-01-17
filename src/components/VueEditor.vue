@@ -109,8 +109,8 @@ export default {
 
       this.prepareEditorConfig(editorConfig);
 
-      Quill.register("modules/imageResize", ImageResize);
-      Quill.register("modules/imageDropAndPaste", QuillImageDropAndPaste);
+      Quill.register("modules/imageResize", ImageResize, true);
+      Quill.register("modules/imageDropAndPaste", QuillImageDropAndPaste, true);
 
       this.quill = new Quill(this.$refs.quillContainer, editorConfig);
     },
@@ -246,15 +246,7 @@ export default {
         (this.quill.getSelection() || {}).index || this.quill.getLength();
 
       if (index) {
-        var delta = this.quill.insertEmbed(
-          index,
-          "image",
-          {
-            url: imageDataUrl
-          },
-          "user"
-        );
-        console.log(delta);
+        this.quill.insertEmbed(index, "image", imageDataUrl, "user");
       }
 
       // var filename = [
@@ -290,6 +282,4 @@ export default {
 
 <style src="quill/dist/quill.snow.css"></style>
 <style src="../assets/vue2-editor.scss" lang="scss"></style>
-<style lang="scss">
-@import "../../node_modules/highlight.js/styles/monokai-sublime.css";
-</style>
+<style src="highlight.js/styles/monokai-sublime.css"></style>
