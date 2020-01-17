@@ -1,6 +1,6 @@
 {
   "name": "vue2-editor-image-highlight",
-  "version": "1.0.0",
+  "version": "1.0.9",
   "description": "HTML editor using Vue.js 2, and Quill.js, an open source editor",
   "author": {
     "name": "Zendy Kim",
@@ -63,18 +63,17 @@
       }
     ]
   },
-  "main": "dist/vue2-editor.common.js",
-  "module": "dist/vue2-editor.esm.js",
-  "unpkg": "dist/vue2-editor.umd.min.js",
+  "main": "dist/vue2-editor-image-highlight.common.js",
+  "module": "dist/vue2-editor-image-highlight.esm.js",
+  "unpkg": "dist/vue2-editor-image-highlight.umd.min.js",
   "files": [
     "dist",
-    "dist/vue2-editor.common.js",
-    "dist/vue2-editor.umd.min.js",
-    "dist/vue2-editor.umd.js",
-    "dist/vue2-editor.esm.js"
+    "dist/vue2-editor-image-highlight.common.js",
+    "dist/vue2-editor-image-highlight.umd.min.js",
+    "dist/vue2-editor-image-highlight.umd.js",
+    "dist/vue2-editor-image-highlight.esm.js"
   ],
   "dependencies": {
-    "blob-util": "^2.0.2",
     "quill": "^1.3.6",
     "quill-image-drop-and-paste": "^1.0.4",
     "quill-image-resize": "^3.0.9"
@@ -96,7 +95,6 @@
     "http-server": "^0.11.1",
     "node-sass": "^4.12.0",
     "querystringify": "^2.1.1",
-    "quill-image-drop-module": "^1.0.3",
     "sass": "^1.21.0",
     "sass-loader": "^7.1.0",
     "standard-version": "^6.0.1",

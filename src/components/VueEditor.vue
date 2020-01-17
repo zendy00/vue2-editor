@@ -15,30 +15,15 @@
 </template>
 
 <script>
-//import hljs from "highlight.js";
 import Quill from "quill";
-import { ImageResize } from "quill-image-resize";
+import ImageResize from "quill-image-resize";
 import QuillImageDropAndPaste from "quill-image-drop-and-paste";
-import { base64StringToBlob } from "blob-util";
+import hljs from "highlight.js";
+//import { base64StringToBlob } from "blob-util";
 import defaultToolbar from "@/helpers/default-toolbar";
 import oldApi from "@/helpers/old-api";
 import mergeDeep from "@/helpers/merge-deep";
 import MarkdownShortcuts from "@/helpers/markdown-shortcuts";
-
-window.hljs.configure({
-  // optionally configure hljs
-  languages: [
-    "javascript",
-    "ruby",
-    "python",
-    "cs",
-    "css",
-    "bash",
-    "shell",
-    "htmlbars"
-  ]
-});
-window.hljs.initHighlightingOnLoad();
 
 export default {
   name: "VueEditor",
@@ -124,6 +109,7 @@ export default {
 
       this.prepareEditorConfig(editorConfig);
 
+      Quill.register("modules/imageResize", ImageResize);
       Quill.register("modules/imageDropAndPaste", QuillImageDropAndPaste);
 
       this.quill = new Quill(this.$refs.quillContainer, editorConfig);
@@ -131,7 +117,9 @@ export default {
 
     setModules() {
       let modules = {
-        syntax: true,
+        syntax: {
+          highlight: text => hljs.highlightAuto(text).value
+        },
         toolbar: this.editorToolbar.length
           ? this.editorToolbar
           : defaultToolbar,
@@ -249,10 +237,10 @@ export default {
       if (!type) type = "image/png";
 
       // base64 to blob
-      var blob = base64StringToBlob(
-        imageDataUrl.replace(/^data:image\/\w+;base64,/, ""),
-        type
-      );
+      // var blob = base64StringToBlob(
+      //   imageDataUrl.replace(/^data:image\/\w+;base64,/, ""),
+      //   type
+      // );
 
       const index =
         (this.quill.getSelection() || {}).index || this.quill.getLength();

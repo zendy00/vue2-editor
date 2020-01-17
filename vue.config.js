@@ -15,9 +15,8 @@ module.exports = {
     if (isDev || buildingDemos) {
       config.plugins.push(
         new webpack.ProvidePlugin({
-          "window.Quill": "quill/dist/quill.js",
-          Quill: "quill/dist/quill.js",
-          "window.hljs": "highlight.js"
+          // "window.Quill": "quill/dist/quill.js",
+          // Quill: "quill/dist/quill.js"
         })
       );
     }
