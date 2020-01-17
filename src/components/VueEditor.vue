@@ -15,11 +15,30 @@
 </template>
 
 <script>
+//import hljs from "highlight.js";
 import Quill from "quill";
+import { ImageResize } from "quill-image-resize";
+import QuillImageDropAndPaste from "quill-image-drop-and-paste";
+import { base64StringToBlob } from "blob-util";
 import defaultToolbar from "@/helpers/default-toolbar";
 import oldApi from "@/helpers/old-api";
 import mergeDeep from "@/helpers/merge-deep";
 import MarkdownShortcuts from "@/helpers/markdown-shortcuts";
+
+window.hljs.configure({
+  // optionally configure hljs
+  languages: [
+    "javascript",
+    "ruby",
+    "python",
+    "cs",
+    "css",
+    "bash",
+    "shell",
+    "htmlbars"
+  ]
+});
+window.hljs.initHighlightingOnLoad();
 
 export default {
   name: "VueEditor",
@@ -104,12 +123,24 @@ export default {
       };
 
       this.prepareEditorConfig(editorConfig);
+
+      Quill.register("modules/imageDropAndPaste", QuillImageDropAndPaste);
+
       this.quill = new Quill(this.$refs.quillContainer, editorConfig);
     },
 
     setModules() {
       let modules = {
-        toolbar: this.editorToolbar.length ? this.editorToolbar : defaultToolbar
+        syntax: true,
+        toolbar: this.editorToolbar.length
+          ? this.editorToolbar
+          : defaultToolbar,
+        imageDropAndPaste: {
+          handler: this.imageHandler
+        },
+        imageResize: {
+          moduels: ["Resize", "DisplaySize", "Toolbar"]
+        }
       };
       if (this.useMarkdownShortcuts) {
         Quill.register("modules/markdownShortcuts", MarkdownShortcuts, true);
@@ -197,7 +228,8 @@ export default {
       toolbar.addHandler("image", this.customImageHandler);
     },
 
-    customImageHandler(image, callback) {
+    //customImageHandler(image, callback) {
+    customImageHandler() {
       this.$refs.fileInput.click();
     },
 
@@ -211,6 +243,58 @@ export default {
       let range = Editor.getSelection();
       let cursorLocation = range.index;
       this.$emit("image-added", file, Editor, cursorLocation, resetUploader);
+    },
+    imageHandler(imageDataUrl, type) {
+      // give a default mime type if the type was null
+      if (!type) type = "image/png";
+
+      // base64 to blob
+      var blob = base64StringToBlob(
+        imageDataUrl.replace(/^data:image\/\w+;base64,/, ""),
+        type
+      );
+
+      const index =
+        (this.quill.getSelection() || {}).index || this.quill.getLength();
+
+      if (index) {
+        var delta = this.quill.insertEmbed(
+          index,
+          "image",
+          {
+            url: imageDataUrl
+          },
+          "user"
+        );
+        console.log(delta);
+      }
+
+      // var filename = [
+      //   "my",
+      //   "cool",
+      //   "image",
+      //   "-",
+      //   Math.floor(Math.random() * 1e12),
+      //   "-",
+      //   new Date().getTime(),
+      //   ".",
+      //   type.match(/^image\/(\w+)$/i)[1]
+      // ].join("");
+
+      // generate a form data
+      // var formData = new FormData();
+      // formData.append("filename", filename);
+      // formData.append("file", blob);
+
+      // // upload image to your server
+      // callUploadAPI(your_upload_url, formData, (err, res) => {
+      //   if (err) return;
+      //   // success? you should return the uploaded image's url
+      //   // then insert into the quill editor
+      //   const index = (quill.getSelection() || {}).index || quill.getLength();
+      //   if (index)
+      //     quill.insertEmbed(index, "image", res.data.image_url, "user");
+      // });
     }
   }
 };
@@ -218,3 +302,6 @@ export default {
 
 <style src="quill/dist/quill.snow.css"></style>
 <style src="../assets/vue2-editor.scss" lang="scss"></style>
+<style lang="scss">
+@import "../../node_modules/highlight.js/styles/monokai-sublime.css";
+</style>
