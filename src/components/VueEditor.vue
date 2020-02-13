@@ -19,7 +19,6 @@ import Quill from "quill";
 import ImageResize from "quill-image-resize";
 import QuillImageDropAndPaste from "quill-image-drop-and-paste";
 import hljs from "highlight.js";
-import { base64StringToBlob } from "blob-util";
 import defaultToolbar from "@/helpers/default-toolbar";
 import oldApi from "@/helpers/old-api";
 import mergeDeep from "@/helpers/merge-deep";
@@ -242,10 +241,12 @@ export default {
       if (!type) type = "image/png";
 
       //base64 to blob
-      let blob = base64StringToBlob(
-        imageDataUrl.replace(/^data:image\/\w+;base64,/, ""),
-        type
-      );
+      let binStr = atob(imageDataUrl.replace(/^data:image\/\w+;base64,/, ""));
+      let arr = new Uint8Array(binStr.length);
+      for (let i = 0; i < binStr.length; i++) {
+        arr[i] = binStr.charCodeAt(i);
+      }
+      //let blob = new Blob([byteArray], {type: contentType});
 
       // <img 태그에 base64 문자열을 넣을때는 아래것을 사용.
       // const index =
@@ -265,7 +266,7 @@ export default {
         type.match(/^image\/(\w+)$/i)[1]
       ].join("");
 
-      let file = new File([blob], filename, { type: type });
+      let file = new File([arr], filename, { type: type });
 
       //generate a form data
       var formData = new FormData();
