@@ -8,7 +8,7 @@
       use-markdown-shortcuts
       @focus="onEditorFocus"
       @blur="onEditorBlur"
-      @imageAdded="handleImageAdded"
+      @image-added="handleImageAdded"
       @image-removed="handleImageRemoved"
       imageUploadUrl="/api/common/imgUpload"
     />
@@ -78,6 +78,7 @@ export default {
     },
 
     async handleImageAdded(file, Editor, cursorLocation) {
+      console.log(file);
       const formData = new FormData();
       formData.append("image", file);
 

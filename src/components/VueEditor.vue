@@ -23,7 +23,6 @@ import defaultToolbar from "@/helpers/default-toolbar";
 import oldApi from "@/helpers/old-api";
 import mergeDeep from "@/helpers/merge-deep";
 import MarkdownShortcuts from "@/helpers/markdown-shortcuts";
-import axios from "axios";
 
 export default {
   name: "VueEditor",
@@ -246,15 +245,6 @@ export default {
       for (let i = 0; i < binStr.length; i++) {
         arr[i] = binStr.charCodeAt(i);
       }
-      //let blob = new Blob([byteArray], {type: contentType});
-
-      // <img 태그에 base64 문자열을 넣을때는 아래것을 사용.
-      // const index =
-      //   (this.quill.getSelection() || {}).index || this.quill.getLength();
-
-      // if (index) {
-      //   this.quill.insertEmbed(index, "image", imageDataUrl, "user");
-      // }
 
       let filename = [
         "editor-img",
@@ -268,31 +258,10 @@ export default {
 
       let file = new File([arr], filename, { type: type });
 
-      //generate a form data
-      var formData = new FormData();
-      formData.append("filename", filename);
-      formData.append("file", file);
-
-      // upload image to your server
-      axios
-        .post(this.imageUploadUrl, formData)
-        .then(res => {
-          console.log(res.data);
-          const index =
-            (this.quill.getSelection() || {}).index || this.quill.getLength();
-
-          if (index) {
-            this.quill.insertEmbed(
-              index,
-              "image",
-              "./" + res.data.imageUrl,
-              "user"
-            );
-          }
-        })
-        .catch(err => {
-          return;
-        });
+      let Editor = this.quill;
+      let range = Editor.getSelection();
+      let cursorLocation = range.index;
+      this.$emit("image-added", file, Editor, cursorLocation);
     }
   }
 };
