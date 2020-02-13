@@ -231,8 +231,8 @@ export default {
       };
       let file = $event.target.files[0];
       let Editor = this.quill;
-      let range = Editor.getSelection();
-      let cursorLocation = range.index;
+      let cursorLocation =
+        (this.quill.getSelection() || {}).index || this.quill.getLength();
       this.$emit("image-added", file, Editor, cursorLocation, resetUploader);
     },
     imageHandler(imageDataUrl, type) {
@@ -259,8 +259,8 @@ export default {
       let file = new File([arr], filename, { type: type });
 
       let Editor = this.quill;
-      let range = Editor.getSelection();
-      let cursorLocation = range.index;
+      let cursorLocation =
+        (this.quill.getSelection() || {}).index || this.quill.getLength();
       this.$emit("image-added", file, Editor, cursorLocation);
     }
   }
