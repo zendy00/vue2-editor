@@ -19,11 +19,12 @@ import Quill from "quill";
 import ImageResize from "quill-image-resize";
 import QuillImageDropAndPaste from "quill-image-drop-and-paste";
 import hljs from "highlight.js";
-//import { base64StringToBlob } from "blob-util";
+import { base64StringToBlob } from "blob-util";
 import defaultToolbar from "@/helpers/default-toolbar";
 import oldApi from "@/helpers/old-api";
 import mergeDeep from "@/helpers/merge-deep";
 import MarkdownShortcuts from "@/helpers/markdown-shortcuts";
+import axios from "axios";
 
 export default {
   name: "VueEditor",
@@ -60,6 +61,10 @@ export default {
     useMarkdownShortcuts: {
       type: Boolean,
       default: false
+    },
+    imageUploadUrl: {
+      type: String,
+      default: ""
     }
   },
 
@@ -236,45 +241,57 @@ export default {
       // give a default mime type if the type was null
       if (!type) type = "image/png";
 
-      // base64 to blob
-      // var blob = base64StringToBlob(
-      //   imageDataUrl.replace(/^data:image\/\w+;base64,/, ""),
-      //   type
-      // );
+      //base64 to blob
+      let blob = base64StringToBlob(
+        imageDataUrl.replace(/^data:image\/\w+;base64,/, ""),
+        type
+      );
 
-      const index =
-        (this.quill.getSelection() || {}).index || this.quill.getLength();
+      // <img 태그에 base64 문자열을 넣을때는 아래것을 사용.
+      // const index =
+      //   (this.quill.getSelection() || {}).index || this.quill.getLength();
 
-      if (index) {
-        this.quill.insertEmbed(index, "image", imageDataUrl, "user");
-      }
+      // if (index) {
+      //   this.quill.insertEmbed(index, "image", imageDataUrl, "user");
+      // }
 
-      // var filename = [
-      //   "my",
-      //   "cool",
-      //   "image",
-      //   "-",
-      //   Math.floor(Math.random() * 1e12),
-      //   "-",
-      //   new Date().getTime(),
-      //   ".",
-      //   type.match(/^image\/(\w+)$/i)[1]
-      // ].join("");
+      let filename = [
+        "editor-img",
+        "-",
+        Math.floor(Math.random() * 1e12),
+        "-",
+        new Date().getTime(),
+        ".",
+        type.match(/^image\/(\w+)$/i)[1]
+      ].join("");
 
-      // generate a form data
-      // var formData = new FormData();
-      // formData.append("filename", filename);
-      // formData.append("file", blob);
+      let file = new File([blob], filename, { type: type });
 
-      // // upload image to your server
-      // callUploadAPI(your_upload_url, formData, (err, res) => {
-      //   if (err) return;
-      //   // success? you should return the uploaded image's url
-      //   // then insert into the quill editor
-      //   const index = (quill.getSelection() || {}).index || quill.getLength();
-      //   if (index)
-      //     quill.insertEmbed(index, "image", res.data.image_url, "user");
-      // });
+      //generate a form data
+      var formData = new FormData();
+      formData.append("filename", filename);
+      formData.append("file", file);
+
+      // upload image to your server
+      axios
+        .post(this.imageUploadUrl, formData)
+        .then(res => {
+          console.log(res.data);
+          const index =
+            (this.quill.getSelection() || {}).index || this.quill.getLength();
+
+          if (index) {
+            this.quill.insertEmbed(
+              index,
+              "image",
+              "./" + res.data.imageUrl,
+              "user"
+            );
+          }
+        })
+        .catch(err => {
+          return;
+        });
     }
   }
 };

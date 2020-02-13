@@ -1,6 +1,6 @@
 {
   "name": "vue2-editor-image-highlight",
-  "version": "1.0.13",
+  "version": "1.0.17",
   "description": "HTML editor using Vue.js 2, and Quill.js, an open source editor",
   "author": {
     "name": "Zendy Kim",
@@ -88,6 +88,7 @@
     "@vuepress/plugin-google-analytics": "^1.0.0-rc.1",
     "axios": "^0.19.0",
     "babel-eslint": "^10.0.1",
+    "blob-util": "^2.0.2",
     "eslint": "^5.16.0",
     "eslint-plugin-prettier": "^3.1.0",
     "eslint-plugin-vue": "^5.0.0",

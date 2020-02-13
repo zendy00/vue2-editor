@@ -10,6 +10,7 @@
       @blur="onEditorBlur"
       @imageAdded="handleImageAdded"
       @image-removed="handleImageRemoved"
+      imageUploadUrl="/api/common/imgUpload"
     />
   </div>
 </template>

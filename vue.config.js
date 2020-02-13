@@ -8,7 +8,6 @@ module.exports = {
   css: {
     extract: false
   },
-
   outputDir: buildDirectory,
 
   configureWebpack: config => {
@@ -19,6 +18,10 @@ module.exports = {
           // Quill: "quill/dist/quill.js"
         })
       );
+
+      config.devServer = {
+        proxy: "http://localhost:3000"
+      };
     }
   },
 
