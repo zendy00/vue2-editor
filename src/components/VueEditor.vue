@@ -250,8 +250,6 @@ export default {
         "editor-img",
         "-",
         Math.floor(Math.random() * 1e12),
-        "-",
-        new Date().getTime(),
         ".",
         type.match(/^image\/(\w+)$/i)[1]
       ].join("");
